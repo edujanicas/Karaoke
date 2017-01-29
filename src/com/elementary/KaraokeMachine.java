@@ -137,7 +137,4 @@ public class KaraokeMachine {
                                 song.getArtist());
         }
     }
-
-
-
 }

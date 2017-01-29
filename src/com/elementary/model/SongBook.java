@@ -1,10 +1,7 @@
 package com.elementary.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by ejanicas on 29/01/17.
@@ -16,6 +13,39 @@ public class SongBook {
         mSongs = new ArrayList<Song>();
     }
 
+    public void exportTo(String fileName) {
+        try (
+                FileOutputStream fos = new FileOutputStream(fileName);
+                PrintWriter writer = new PrintWriter(fos);
+        ) {
+            for(Song song : mSongs) {
+                writer.printf("%s|%s|%s%n",
+                        song.getArtist(),
+                        song.getTitle(),
+                        song.getVideoUrl());
+            }
+        } catch (IOException ioe) {
+            System.out.printf("Problem saving %s %n", fileName);
+            ioe.printStackTrace();
+        }
+    }
+
+    public void importFrom(String fileName) {
+        try (
+                FileInputStream fis = new FileInputStream(fileName);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+        ) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] args = line.split("\\|");
+                addSong(new Song(args[0], args[1], args[2]));
+            }
+        } catch (IOException ioe) {
+            System.out.printf("Problem loading %s %n", fileName);
+            ioe.printStackTrace();
+        }
+    }
+
     public void addSong(Song song) {
         mSongs.add(song);
     }
@@ -24,10 +54,8 @@ public class SongBook {
         return mSongs.size();
     }
 
-
-    // FIXME: This should be chaced
     private Map<String, List<Song>> byArtist() {
-        Map<String, List<Song>> byArtist = new HashMap<>();
+        Map<String, List<Song>> byArtist = new TreeMap<>();
         for (Song song : mSongs) {
             List<Song> artistSongs = byArtist.get(song.getArtist());
             if (artistSongs == null) {
@@ -44,7 +72,17 @@ public class SongBook {
     }
 
     public List<Song> getSongsForArtist(String artistName) {
-        return byArtist().get(artistName);
+        List<Song> songs = byArtist().get(artistName);
+        songs.sort(new Comparator<Song>() {
+            @Override
+            public int compare(Song song1, Song song2) {
+                if (song1.equals(song2)) {
+                    return 0;
+                }
+                return song1.getTitle().compareTo(song2.getTitle());
+            }
+        });
+        return songs;
     }
 
 }
