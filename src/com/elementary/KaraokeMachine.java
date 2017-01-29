@@ -1,6 +1,7 @@
 package com.elementary;
 
 import com.elementary.model.SongBook;
+import com.elementary.model.Song;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -47,7 +48,9 @@ public class KaraokeMachine {
                 choice = promptAction();
                 switch (choice) {
                     case "add":
-                        // TODO: Add a new song
+                        Song song = promptNewSong();
+                        mSongBook.addSong(song);
+                        System.out.printf("%s added! %n%n", song);
                         break;
                     case "quit":
                         System.out.println("Thanks for playing");
@@ -61,6 +64,16 @@ public class KaraokeMachine {
                 ioe.printStackTrace();
             }
         } while (!choice.equals("quit"));
+    }
+
+    private Song promptNewSong() throws IOException {
+        System.out.print("Enter the artist's name: ");
+        String artist = mReader.readLine();
+        System.out.print("Enter the title: ");
+        String title = mReader.readLine();
+        System.out.print("Enter the video URL: ");
+        String videoUrl = mReader.readLine();
+        return new Song(artist, title, videoUrl);
     }
 
 
