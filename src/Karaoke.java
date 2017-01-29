@@ -1,7 +1,5 @@
-import com.elementary.model.Song;
-import com.elementary.model.SongBook;
-
 import com.elementary.KaraokeMachine;
+import com.elementary.model.SongBook;
 
 /**
  * Created by ejanicas on 29/01/17.
